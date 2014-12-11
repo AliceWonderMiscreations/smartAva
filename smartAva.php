@@ -10,7 +10,7 @@
     This program is free software; you can redistribute it and/or modify
  */
  
- /*  Copyright 2013  Alice Wonder  (email : alicewonder@shastaherps.org)
+ /*  Copyright 2013  Alice Wonder  (email : gitalice@domblogger.net)
     it under the terms of the GNU General Public License, version 2, as 
     published by the Free Software Foundation.
 

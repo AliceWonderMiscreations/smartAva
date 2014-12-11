@@ -1,6 +1,6 @@
 === smartAva ===
 Contributors: AliceWonderFull
-Donate link: http://www.clfsrpm.net/wpdonate/
+Donate link: https://supporters.eff.org/donate
 Tags: gravatar, privacy
 Requires at least: 2.5
 Tested up to: 3.7.1
@@ -27,6 +27,11 @@ page) for more discussion on this issue.
 4. If you so choose, check the box at bottom of admin page to 'Allow
    Notification to Users of smartAva usage' so users of your blog will know you
    care about their privacy.
+   
+== Development ==
+
+Development is now taking place on github at
+https://github.com/AliceWonderMiscreations/smartAva
 
 == Frequently Asked Questions ==
 
@@ -54,7 +59,7 @@ to ensure the privacy of their visitors.
 = 0.3.1 =
 * December 02, 2013
 * Fixed a typo, added label tags to the text inputs on admin page. No new
-  functionallity or bugs/todo issues addressed.
+  functionality or bugs/todo issues addressed.
 
 = 0.3 =
 * November 29, 2013

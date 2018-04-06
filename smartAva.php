@@ -312,8 +312,10 @@ function smartAvaHash($email)
     }
     
     if ($qq === 0) {
+        // obfuscate
         $obf=hash('sha256', $salt[0] . $email);
-        return(md5($salt[1] . $obf)); //obfuscate
+        $obf=hash('sha256', $salt[1] . $obf);
+        return substr($obf, 4, 32);
     } else {
         // there was a white-list match, do not obfuscate
         return(md5($email));

@@ -1,14 +1,6 @@
-=== smartAva ===
-Contributors: AliceWonderFull
-Donate link: https://supporters.eff.org/donate
-Tags: gravatar, privacy
-Requires at least: 2.5
-Tested up to: 3.7.1
-Stable tag: trunk
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+smartAva WordPress Plugin
+=========================
 
-== Description ==
 Obfuscates the e-mail address hash used to get avatars from gravatar.com thus
 protecting the privacy of users who do not want their activity tracked.
 
@@ -19,7 +11,8 @@ obfuscated when hashed.
 Please see the Extended Description (In 'Other Notes' tab in WordPress hosted
 page) for more discussion on this issue.
 
-== Installation ==
+Installation
+------------
 
 1. Upload `smartAva.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
@@ -28,14 +21,16 @@ page) for more discussion on this issue.
    Notification to Users of smartAva usage' so users of your blog will know you
    care about their privacy.
    
-== Development ==
+Development
+-----------
 
 Development is now taking place on github at
 https://github.com/AliceWonderMiscreations/smartAva
 
-== Frequently Asked Questions ==
+Frequently Asked Questions
+--------------------------
 
-= Aren't you being paranoid? =
+### Aren't you being paranoid?
 
 Perhaps, but I do know that some of the blogs I visit and comment on are not
 something I would want a future employer to find about me when he or she does
@@ -47,36 +42,33 @@ respect to their on-line activity, and I hope as many blog administrators as
 possible will understand this desire for privacy and take this simple step
 to ensure the privacy of their visitors.
 
-== Changelog ==
+Changelog
+---------
 
-= 0.4.0 =
+### 0.4.0
+
 * December 04, 2013
 * With proper support in php, you can now white-list UTF8 International
   Domain Names without needing to convert them to ASCII punycode first.
 * Admin interface now (mostly) matches look and feel of other Settings pages.
 * Error message for non-conforming domain/addresses.
 
-= 0.3.1 =
+### 0.3.1
+
 * December 02, 2013
 * Fixed a typo, added label tags to the text inputs on admin page. No new
   functionality or bugs/todo issues addressed.
 
-= 0.3 =
+### 0.3
+
 * November 29, 2013
 * Footer notifying users of smartAva website turned into an option the blog
   master has to specifically enable.
 * Fixed some HTML tags in admin page that were not valid.
 
-= 0.2 =
+### 0.2
+
 * First public release. November 28, 2013
-
-== Screenshots ==
-
-1. Admin interface showing input fields for adding domains and e-mail addresses
-   to white-list and check-boxes for deleting existing domains.
-2. Admin interface showing the existing salts along with option input fields
-   for manually specifying salts and checkbox for re-generating salts. Also
-   shows check-box for displaying footer message.
 
 == Upgrade Notice ==
 
@@ -86,7 +78,9 @@ Nicer admin interface, internal IDN support (if your php install supports it.)
 = 0.3 =
 Fixes some incorrect HTML in the administrative page.
 
-== Regression Warning ==
+Regression Warning
+------------------
+
 This plugin uses the code for `get_avatar()` from the version of WordPress
 listed as 'Tested up to' in the top of this 'readme.txt' file (shown as
 'Compatible up to' on WordPress hosted plugin page), with one minor
@@ -98,7 +92,9 @@ function, use of this plugin could cause a regression.
 I will do my best to try and release updates in a timely manner whenever a new
 stable version of WordPress is released that makes changes to that function.
 
-== Extended Description ==
+Extended Description
+--------------------
+
 WordPress by default uses avatars from gravatar.com to display with comments
 made by visitors to your site. To accomplish this, it uses an MD5 hash of the
 commenter's e-mail address. This is done by the function `get_avatar()` in the
@@ -134,7 +130,9 @@ colleague who posts at your blog often and would like his or her custom avatar
 used with comments. By adding the e-mail address he or she uses to the e-mail
 white-list, their e-mail address will not be obfuscated.
 
-== How It Works ==
+How It Works
+------------
+
 The standard URI for a gravatar.com hosted avatar is generated using the
 `get_avatar()` function in the pluggables.php file of a standard WordPress
 installation.
@@ -142,11 +140,11 @@ installation.
 This plugin replaces that function with a slightly modified version. In the
 modified version, instead of using
 
-`$email_hash = md5( strtolower( trim( $email ) ) );`
+    $email_hash = md5( strtolower( trim( $email ) ) );
 
 it uses
 
-`$email_hash = smartAvaHash($email);`
+    $email_hash = smartAvaHash($email);
 
 The function `smartAvaHash` checks to see if the argument `$email` is from a
 white-listed domain or is white-listed itself.
@@ -158,7 +156,8 @@ If it is not white-listed, the function salts the address and creates a SHA256
 hash. That hash is salted a second time and an MD5 hash is created and
 returned.
 
-== International Domain Names Support ==
+International Domain Names Support
+----------------------------------
 
 If your php install has the necessary support, there is IDN support for white-
 listing domains and e-mail addresses using UTF8 Internation Domain Names.
@@ -177,7 +176,8 @@ The display of UTF8 domains will have the ASCII punycode equivalent in the
 HTML title tag, so you can visually see what it is when you mouse over the
 UTF8 domain name.
 
-= WordPress Support =
+WordPress Support
+-----------------
 
 At least in version 3.7.1, WordPress itself does not like user comments posted
 with a UTF8 version of an International Domain Name. Users with e-mail
@@ -187,7 +187,8 @@ domain name.
 There may be a WordPress plugin that fixes that issue, I do not think it would
 be very hard to write one.
 
-= IDN Bugs and Issues =
+IDN Bugs and Issues
+-------------------
 
 I have noticed some bugs that I believe are related to the PECL modules. For
 example, the domain 'sßorra.it' does not work, but '名がドメイン.com' does.
@@ -202,7 +203,9 @@ punycode versions of Internation Domain Names, which always starts with 'xn--'.
 This quite likely will result them in being out of order in many cases. At some
 point I will see if there is a better way to sort.
 
-== Plugin Security ==
+Plugin Security
+---------------
+
 This plugin does not make any network connections and does not write any files.
 
 It does write to the WordPress database but the only user supplied data that
@@ -222,19 +225,25 @@ Additionally, processing of the POST data sent when changing options uses a
 NONCE as an extra check to make sure the data submitted comes from the form
 on the administrative page.
 
-== TODO ==
+TODO
+----
+
 * Properly internationalize at least for Spanish, German, and Greek.
 * Implement a mechanism by which users who are registered and logged in at a
   blog can add their e-mail address to the white-list.
 
-== Bug Reports ==
+Bug Reports
+-----------
+
 If you believe you have found a bug, the fastest way to get my attention is
 through github https://github.com/AliceWonderMiscreations/smartAva
 
 You can also try using the support forum at
 http://wordpress.org/support/plugin/smartava
 
-== Description of WordPress Options ==
+Description of WordPress Options
+--------------------------------
+
 This plugin creates and uses up to five WordPress options. Options are managed
 using the following standard WordPress functions:
 
@@ -242,32 +251,35 @@ using the following standard WordPress functions:
 * `update_option()`
 * `delete_option()`
 
-= smartAvaDomains =
+### smartAvaDomains
+
 An array of domains that are white-listed from hash obfuscation. Posts with
 e-mail addresses at those domains (and sub-domains) will not have their e-mail
 address obfuscated before the hash that is used with gravatar.com is created.
 This option is not created until the first time you specifically add a domain
 to the white-list.
 
-= smartAvaAddys =
+### smartAvaAddys
+
 An array of e-mail addresses that are white-listed from hash obfuscation. Posts
 with e-mail addresses in that array will not have their e-mail address
 obfuscated before the hash that is used with gravatar.com is created. This
 option is not created until the first time you specifically add an e-mail
 address to the white-list.
 
-= smartAvaSalts =
+### smartAvaSalts
+
 An array that contains the two salts used to obfuscate the the e-mail hash. It
 is automatically created whenever the plug-in wants a salt and the option does
 not exist.
 
-= smartAvaFooter =
+### smartAvaFooter
 If this option exists, a footer is added to pages letting users know that you
 are running smartAva with a link to a web page describing what it is. If the
 option does not exist, the notice is not added to the footer. The option is
 created or deleted by checking or un-checking a box in the admin page.
 
-= smartAvaAuthKey =
+### smartAvaAuthKey
 When an admin page is served, a NONCE is created and stored as this option. It
 is inserted into the form as a hidden input and checked against what is stored
 in the WP database when the form is processed to make sure they match. If they

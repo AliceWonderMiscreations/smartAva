@@ -1,6 +1,11 @@
 smartAva WordPress Plugin
 =========================
 
+__CURRENTLY BROKEN__: This functions replaces a core plugin that has been
+altered since this plugin was written. I will be fixing it.
+
+-----------------------------------------------------------
+
 Obfuscates the e-mail address hash used to get avatars from gravatar.com thus
 protecting the privacy of users who do not want their activity tracked.
 

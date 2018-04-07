@@ -91,7 +91,7 @@ function smartAvaEmail2Puny($email)
 function smartAvaFooter()
 {
     // @codingStandardsIgnoreLine
-    echo('<div style="text-align: center;">' . __('Anonymity protected with') . ' <a href="http://wordpress.org/plugins/smartava/" target="_blank">smartAva</a></div>');
+    echo('<div style="text-align: center;">' . __('Anonymity protected with') . ' <a href="https://wordpress.org/plugins/smartava/" target="_blank">smartAva</a></div>');
     return;
 }//end smartAvaFooter()
 
@@ -221,7 +221,12 @@ function smartAvaRemoveAddresses($input)
 }//end smartAvaRemoveAddresses()
 
 /**
- * Generates a salt
+ * Generates a string from 256 bits of random data, suitable for a salt or a nonce
+ * if php 7 is used or if php 5.6 is used and openssl_random_pseudo_bytes is available.
+ *
+ * For older versions of PHP or php 5.6 without openssl_random_pseudo_bytes then what is
+ * generated is not cryptographically secure but should be safe for the hash obfuscation
+ * salt but is not as safe as it should be for the admin form CSRF nonce.
  *
  * @return string
  */
@@ -230,10 +235,12 @@ function smartAvaSaltShaker()
     if (function_exists('random_bytes')) {
         $raw = random_bytes(32);
     } elseif (function_exists('openssl_random_pseudo_bytes')) {
+        // WARNING - this is not always crypto usable on deprecated versions of PHP < 5.6
         $raw = openssl_random_pseudo_bytes(32);
     }
     if (! isset($raw)) {
-        // not suitable for cryptography but probably good enough for a salt to obfuscate the e-mail hash
+        // not suitable for cryptography but probably good enough for our purposes, and only needed with
+        // PHP < 7 that also do not have openssl_random_pseudo_bytes()
         $alphabet='abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*(-_=+{}[]:;,./<>?|';
         $alphLength=strlen($alphabet);
         $alphabet=str_shuffle($alphabet);
@@ -247,17 +254,15 @@ function smartAvaSaltShaker()
         $raw = hash('sha256', $tmp, true);
     }
     $salt = base64_encode($raw);
-    // don't really need to shuffle but does not hurt either
-    $salt = str_shuffle($raw);
     return($salt);
 }//end smartAvaSaltShaker()
 
 /**
- * Generates the md5 hash to use with the gravatar system
+ * Generates the md5 mimic hash to use with the gravatar system
  *
  * @param string $email The e-mail address to generate a hash for.
  *
- * @return The md5sum string
+ * @return The md5sum mimic string
  */
 function smartAvaHash($email)
 {
@@ -273,12 +278,12 @@ function smartAvaHash($email)
     if (! $addys=get_option('smartAvaAddys')) {
         $addys=array();
     }
-    $addys[]='unknown@gravatar.com'; //no need to obfuscate that one
+    $addys[]='unknown@gravatar.com'; //no need to obfuscate that address
     
     $email=trim(strtolower($email));
     $pemail=smartAvaEmail2Puny($email);
     //validate email
-    if (!filter_var($pemail, FILTER_VALIDATE_EMAIL)) { //hopefully wordpress already has validated this but...
+    if (! filter_var($pemail, FILTER_VALIDATE_EMAIL)) { //hopefully wordpress already has validated this but...
         $pemail='unknown@gravatar.com';
     }
     $foo=explode('@', $pemail);
@@ -326,7 +331,7 @@ function smartAvaHash($email)
 // admin interface functions
 
 /**
- * The admin interface menu.
+ * The admin interface domain menu.
  *
  * @return void
  */
@@ -375,7 +380,11 @@ function smartAvaAdmDomainMenu()
     return;
 }//end smartAvaAdmDomainMenu()
 
-    
+/**
+ * The admin interface address menu.
+ *
+ * @return void
+ */
 function smartAvaAdmAddressMenu()
 {
     echo("<div>\n");
@@ -424,7 +433,11 @@ function smartAvaAdmAddressMenu()
     return;
 }//end smartAvaAdmAddressMenu()
 
-    
+/**
+ * The admin interface salt setting.
+ *
+ * @return void
+ */
 function smartAvaAdmSalty()
 {
     echo("<div>\n");
@@ -480,7 +493,11 @@ function smartAvaAdmSalty()
     echo("</div>\n");
 }//end smartAvaAdmSalty()
 
-    
+/**
+ * The admin interface add footer control.
+ *
+ * @return void
+ */
 function smartAvaAdmNotify()
 {
     echo("<div>\n");
@@ -504,7 +521,11 @@ function smartAvaAdmNotify()
     echo("</div>\n");
 }//end smartAvaAdmNotify()
 
-    
+/**
+ * The admin interface form processing.
+ *
+ * @return void
+ */
 function smartAvaProcessForm()
 {
     $error=array();
@@ -636,10 +657,15 @@ function smartAvaProcessForm()
     echo('<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>Settings saved.</strong></p></div>' . "\n");
 }//end smartAvaProcessForm()
  //end of form processing function
-    
+
+/**
+ * The admin interface options menu.
+ *
+ * @return void
+ */
 function smartAvaAdminOptions()
 {
-    if (!current_user_can('manage_options')) {
+    if (! current_user_can('manage_options')) {
         wp_die(__('What does the fox say?'));
     }
     if (isset($_POST['smartAvaAuthKey'])) {
@@ -653,8 +679,7 @@ function smartAvaAdminOptions()
     // @codingStandardsIgnoreLine
     echo('<div id="icon-options-general" class="icon32"><br /></div><h2>Gr*vatar Obfuscation Administration</h2>' . "\n");
     echo('<form id="smartAvaForm" method="post" action="options-general.php?page=smartAva">' . "\n");
-    $data=smartAvaSaltShaker();
-    $key=hash('sha256', $data);
+    $key=smartAvaSaltShaker();
     update_option('smartAvaAuthKey', $key);
     echo('<input type="hidden" name="smartAvaAuthKey" id="smartAvaAuthKey" value="' . $key . '" />' . "\n");
     
@@ -669,7 +694,11 @@ function smartAvaAdminOptions()
     echo("</div>\n");
 }//end smartAvaAdminOptions()
 
-    
+/**
+ * The admin interface.
+ *
+ * @return void
+ */
 function smartAvaAdminMenu()
 {
     add_options_page('smartAva Administration', 'smartAva', 'manage_options', 'smartAva', 'smartAvaAdminOptions');
@@ -679,10 +708,7 @@ function smartAvaAdminMenu()
 
 add_action('admin_menu', 'smartAvaAdminMenu');
 
-
-
 ////////////////////////
-
 
 if (!function_exists('get_avatar')) :
     if ($footerPermission=get_option('smartAvaFooter')) {
